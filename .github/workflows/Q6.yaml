@@ -1,0 +1,51 @@
+name: Q6
+on:
+  push:
+    paths:
+      - 'Q6.java'
+      - '.github/workflows/Q6.yaml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Créer l'archive et le fichier de différences
+        run: |
+          export TZ=Europe/Paris
+
+          PRECEDENT=$(ls Q6_archive_*.txt 2>/dev/null \
+            | sed -E 's/^Q6_archive_(..)-(..)-(....)-(......)\.txt$/\3\2\1\4 &/' \
+            | sort | tail -n 1 | cut -d' ' -f2)
+          echo "Archive précédente : $PRECEDENT"
+
+          NOUVEAU="Q6_archive_$(date +%d-%m-%Y-%H%M%S).txt"
+          echo "AMPEAU Samuel" > "$NOUVEAU"
+          echo "----- Q6.java -----" >> "$NOUVEAU"
+          cat Q6.java >> "$NOUVEAU"
+          echo "----- Taille de Q6.java (wc) -----" >> "$NOUVEAU"
+          echo "caractères : $(wc -c < Q6.java)" >> "$NOUVEAU"
+          echo "lignes     : $(wc -l < Q6.java)" >> "$NOUVEAU"
+          cat "$NOUVEAU"
+
+          if [ -n "$PRECEDENT" ]; then
+            echo "diff $PRECEDENT $NOUVEAU" > "Q6_différences.txt"
+            diff "$PRECEDENT" "$NOUVEAU" >> "Q6_différences.txt" || true
+          else
+            echo "Pas d'archive précédente (première exécution)" > "Q6_différences.txt"
+          fi
+          cat "Q6_différences.txt"
+
+      - name: Commit et push
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add Q6_archive_*.txt "Q6_différences.txt"
+          git diff --cached --quiet && { echo "Rien de nouveau"; exit 0; }
+          git commit -m "Q6 : archive datée + différences"
+          git pull --rebase
+          git push
