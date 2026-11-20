@@ -1,0 +1,34 @@
+name: Q5
+on:
+  push:
+    paths:
+      - 'Q5.java'
+      - '.github/workflows/Q5.yaml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Créer Q5_archive_JJ-MM-AAAA.txt
+        run: |
+          export TZ=Europe/Paris
+          FICHIER="Q5_archive_$(date +%d-%m-%Y).txt"
+          echo "AMPEAU Samuel" > "$FICHIER"
+          echo "----- Q5.java -----" >> "$FICHIER"
+          cat Q5.java >> "$FICHIER"
+          cat "$FICHIER"
+
+      - name: Commit et push
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add Q5_archive_*.txt
+          git diff --cached --quiet && { echo "Rien de nouveau"; exit 0; }
+          git commit -m "Q5 : archive datée de Q5.java"
+          git pull --rebase
+          git push
