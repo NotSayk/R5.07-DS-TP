@@ -1,0 +1,36 @@
+name: Q2
+on:
+  push:
+    paths:
+      - 'XYZ.txt'
+      - '.github/workflows/Q2.yaml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Créer Q2_archive_XYZ.txt
+        run: |
+          export TZ=Europe/Paris
+          echo "AMPEAU Samuel" > Q2_archive_XYZ.txt
+          echo "Exécution du workflow : $(date '+%d/%m/%Y %H:%M:%S')" >> Q2_archive_XYZ.txt
+          echo "----- Contenu de XYZ.txt -----" >> Q2_archive_XYZ.txt
+          cat XYZ.txt >> Q2_archive_XYZ.txt
+          echo "----- Taille de XYZ.txt -----" >> Q2_archive_XYZ.txt
+          echo "$(wc -c < XYZ.txt) caractères, $(wc -l < XYZ.txt) lignes" >> Q2_archive_XYZ.txt
+          cat Q2_archive_XYZ.txt
+
+      - name: Commit et push
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add Q2_archive_XYZ.txt
+          git diff --cached --quiet && { echo "Rien de nouveau"; exit 0; }
+          git commit -m "Q2 : archive datée de XYZ.txt"
+          git pull --rebase
+          git push
