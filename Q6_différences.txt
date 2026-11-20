@@ -1,1 +1,9 @@
-Pas d'archive précédente (première exécution)
+diff Q6_archive_20-11-2026-142843.txt Q6_archive_20-11-2026-142937.txt
+23c23
+<                     sb.append("x");
+---
+>                     sb.append("x"); // test de diff
+31c31
+< caractères : 745
+---
+> caractères : 761
