@@ -18,7 +18,7 @@ public class Q6 {
             for (int i = ligne; i >= 1; i--) {
                 sb.append("x"); //fix #2
                 if (i > 1) {
-                    sb.append("x");
+                    sb.append("x"); // test de diff
                 }
             }
             System.out.println(sb);
