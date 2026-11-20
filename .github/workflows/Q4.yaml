@@ -1,0 +1,34 @@
+name: Q4
+on:
+  push:
+    paths:
+      - 'Q4.java'
+      - '.github/workflows/Q4.yaml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Créer Q4_archive_JJ-MM-AAAA.txt
+        run: |
+          export TZ=Europe/Paris
+          FICHIER="Q4_archive_$(date +%d-%m-%Y).txt"
+          echo "AMPEAU Samuel" > "$FICHIER"
+          echo "----- Q4.java -----" >> "$FICHIER"
+          cat Q4.java >> "$FICHIER"
+          cat "$FICHIER"
+
+      - name: Commit et push
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add Q4_archive_*.txt
+          git diff --cached --quiet && { echo "Rien de nouveau"; exit 0; }
+          git commit -m "Q4 : archive datée de Q4.java"
+          git pull --rebase
+          git push
