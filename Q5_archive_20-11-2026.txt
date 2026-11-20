@@ -18,7 +18,7 @@ public class Q5 {
         for (int ligne = 1; ligne <=n; ligne++) { // fix  #1
             StringBuilder sb = new StringBuilder();
             for (int i = ligne; i >= 1; i--) {
-                sb.append(i);
+                sb.append("x"); //fix #2
                 if (i > 1) {
                     sb.append(" ");
                 }
