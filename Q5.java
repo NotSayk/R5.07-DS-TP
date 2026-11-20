@@ -13,7 +13,7 @@ public class Q5 {
             return;
         }
 
-        for (int ligne = 1; ligne <=n; ligne++) { // fix issue  #1
+        for (int ligne = 1; ligne <=n; ligne++) { // fix  #1
             StringBuilder sb = new StringBuilder();
             for (int i = ligne; i >= 1; i--) {
                 sb.append(i);
